@@ -8,9 +8,8 @@ def main():
     pass
 
 
-@click.command("room")
-@click.option("--repo", type=str, required=True, help="The repository to use.")
-@click.option("--revision", type=str, default="main", help="The revision to use.")
-@click.option("--subset", type=str, default="default", help="The subset to use.")
-def room(repo: str, revision: str, subset: str):
-    start_chat_room(repo, revision, subset)
+@main.command("room")
+@click.argument("repo", type=str)
+@click.option("-r", "--revision", type=str, default="main")
+def room(repo: str, revision: str):
+    start_chat_room(repo=repo, revision=revision)

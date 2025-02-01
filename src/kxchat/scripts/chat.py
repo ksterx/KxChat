@@ -2,13 +2,13 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 
-def start_chat_room(repo: str, revision: str = "main", subset: str = "default"):
+def start_chat_room(repo: str, revision: str = "main"):
     model = AutoModelForCausalLM.from_pretrained(
         repo,
-        subset,
         revision=revision,
+        device_map="auto",
         torch_dtype=torch.bfloat16,
-        attn_implementation="flash_attention_2",
+        # attn_implementation="flash_attention_2",
     )
     tokenizer = AutoTokenizer.from_pretrained(repo, revision=revision)
     pipe = pipeline("text-generation", model=model, tokenizer=tokenizer)
