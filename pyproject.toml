@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-chat = "kxchat.cli:main"
+kxchat = "kxchat.cli:main"
 
 [build-system]
 requires = ["hatchling"]
