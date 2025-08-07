@@ -9,6 +9,9 @@ def start_chat(
     temperature: float = 0.7,
     top_p: float = 0.95,
     top_k: int = 50,
+    assistant_name: str | None = None,
+    system_prompt: str | None = None,
+    verbose: bool = False,
     **kwargs,
 ):
     click.echo("Loading model...")
@@ -46,6 +49,11 @@ def start_chat(
     _show_manual()
 
     history = []
+    if assistant_name:
+        history.append({"role": "assistant_name", "content": assistant_name})
+    if system_prompt:
+        history.append({"role": "system", "content": system_prompt})
+
     while True:
         print("-" * 88)
         user_uttr = input("You: ")
@@ -56,7 +64,28 @@ def start_chat(
         elif user_uttr == "clear":
             _show_manual()
             history = []
+            if assistant_name:
+                history.append({"role": "assistant_name", "content": assistant_name})
+            if system_prompt:
+                history.append({"role": "system", "content": system_prompt})
             continue
+
+        if user_uttr == "system":
+            system_prompt = input("System: ")
+            print("History cleared")
+            history = []
+            if assistant_name:
+                history.append({"role": "assistant_name", "content": assistant_name})
+            if system_prompt:
+                history.append({"role": "system", "content": system_prompt})
+            continue
+
+        if verbose:
+            print(
+                pipe.tokenizer.apply_chat_template(
+                    history, tokenize=False, add_generation_prompt=True
+                )
+            )
 
         asst_uttr = pipe(
             history,
