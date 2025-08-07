@@ -46,13 +46,17 @@ def start_chat(
             )
         )
 
+    def _clear_history(assistant_name: str | None, system_prompt: str | None):
+        history = []
+        if assistant_name:
+            history.append({"role": "assistant_name", "content": assistant_name})
+        if system_prompt:
+            history.append({"role": "system", "content": system_prompt})
+        return history
+
     _show_manual()
 
-    history = []
-    if assistant_name:
-        history.append({"role": "assistant_name", "content": assistant_name})
-    if system_prompt:
-        history.append({"role": "system", "content": system_prompt})
+    history = _clear_history(assistant_name, system_prompt)
 
     while True:
         print("-" * 88)
@@ -63,29 +67,27 @@ def start_chat(
             break
         elif user_uttr == "clear":
             _show_manual()
-            history = []
-            if assistant_name:
-                history.append({"role": "assistant_name", "content": assistant_name})
-            if system_prompt:
-                history.append({"role": "system", "content": system_prompt})
+            history = _clear_history(assistant_name, system_prompt)
             continue
-
-        if user_uttr == "system":
+        elif user_uttr == "assistant":
+            assistant_name = input("Assistant: ")
+            print("History cleared")
+            history = _clear_history(assistant_name, system_prompt)
+            continue
+        elif user_uttr == "system":
             system_prompt = input("System: ")
             print("History cleared")
-            history = []
-            if assistant_name:
-                history.append({"role": "assistant_name", "content": assistant_name})
-            if system_prompt:
-                history.append({"role": "system", "content": system_prompt})
+            history = _clear_history(assistant_name, system_prompt)
             continue
 
         if verbose:
+            print("+" * 88)
             print(
                 pipe.tokenizer.apply_chat_template(
                     history, tokenize=False, add_generation_prompt=True
                 )
             )
+            print("+" * 88)
 
         asst_uttr = pipe(
             history,
